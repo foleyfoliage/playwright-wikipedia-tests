@@ -1,0 +1,8 @@
+node_modules/
+*-results/
+output/
+playwright-report/
+.env
+lighthouse-results/
+.vscode/
+screenshots/

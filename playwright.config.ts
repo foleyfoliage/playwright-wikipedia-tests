@@ -2,23 +2,18 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: 'src/tests',
-  timeout: 30 * 1000,
-  expect: {
-    timeout: 5000,
-  },
-  reporter: 'list',
+  fullyParallel: true,
+  // reporter: [['html']],
   use: {
-    baseURL: 'https://www.wikipedia.org',
-    trace: 'on-first-retry'
+    headless: false,
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+    viewport: { width: 1920, height: 1080 },
+    launchOptions: { slowMo: 50 },
   },
   projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] }
-    },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] }
-    },
-  ]
+    // { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    // { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+  ],
 });

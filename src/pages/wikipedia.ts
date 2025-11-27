@@ -1,4 +1,6 @@
+// src/pages/wikipedia.ts
 import { Page } from '@playwright/test';
+import { WikipediaSearchResultsPage } from './searchResult';
 
 export class WikipediaHomePage {
   readonly page: Page;
@@ -20,5 +22,17 @@ export class WikipediaHomePage {
     } catch (err) {
       throw new Error(`Search failed for query "${query}": ${err}`);
     }
+  }
+
+  /**
+   * Convenience method: search for a query and open the first result.
+   * Returns a WikipediaSearchResultsPage object for assertions.
+   */
+  async searchAndOpenFirstResult(query: string): Promise<WikipediaSearchResultsPage> {
+    const resultsPage = new WikipediaSearchResultsPage(this.page);
+    await this.gotoHome();
+    await this.search(query);
+    await resultsPage.openFirstResult();
+    return resultsPage;
   }
 }

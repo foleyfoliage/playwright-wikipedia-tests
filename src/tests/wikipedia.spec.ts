@@ -1,46 +1,32 @@
+// src/tests/wikipedia.spec.ts
 import { test, expect, Page } from '@playwright/test';
 import { WikipediaHomePage } from '../pages/wikipedia';
 import { WikipediaSearchResultsPage } from '../pages/searchResult';
 
-async function searchAndOpen(page: Page, query: string): Promise<WikipediaSearchResultsPage> {
-  const home = new WikipediaHomePage(page);
-  const results = new WikipediaSearchResultsPage(page);
-
-  await home.gotoHome();
-  await home.search(query);
-  await results.openFirstResult();
-
-  return results;
-}
-
 test.describe('Wikipedia search - automation support task', () => {
-  test('searches for Quality Assurance and validates result contains "software testing"', async ({ page }) => {
-    const results = await searchAndOpen(page, 'Quality Assurance');
+
+  test('searches for "Quality Assurance" and validates result contains "software testing"', async ({ page }) => {
+    const home = new WikipediaHomePage(page);
+    const results = await home.searchAndOpenFirstResult('Quality Assurance');
     await results.assertPageContains('software testing');
   });
 
   test('verifies that a Wikipedia API/network request occurs during search', async ({ page }) => {
     const home = new WikipediaHomePage(page);
-    let found = false;
 
-    page.on('response', response => {
-      if (
-        (response.url().includes('/w/rest.php/v1/search/title') ||
-        response.url().includes('/w/api.php')) &&
-        response.status() === 200
-      ) {
-        found = true;
-      }
-    });
+    const apiResponse = page.waitForResponse(resp =>
+      (resp.url().includes('/w/rest.php/v1/search/title') || resp.url().includes('/w/api.php')) &&
+      resp.status() === 200
+    );
 
     await home.gotoHome();
     await home.search('Quality Assurance');
 
-    await page.waitForTimeout(2000);
-    expect(found).toBe(true);
+    const response = await apiResponse;
+    expect(response.ok()).toBeTruthy();
   });
 
-  test('searching with a long string returns no results', async ({ page }) => {
+  test('searching with a long nonsense string returns no results', async ({ page }) => {
     const home = new WikipediaHomePage(page);
     const results = new WikipediaSearchResultsPage(page);
 
@@ -65,4 +51,5 @@ test.describe('Wikipedia search - automation support task', () => {
     const count = await page.locator(results.resultsSelector).count();
     expect(count).toBe(0);
   });
+
 });

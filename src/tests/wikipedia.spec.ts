@@ -1,8 +1,8 @@
+// src/tests/wikipedia.spec.ts
 import { test, expect } from '@playwright/test';
 import { WikipediaHomePage } from '../pages/wikipedia';
 import { WikipediaSearchResultsPage } from '../pages/searchResult';
 import { normalizeText } from '../utils/helpers';
-
 
 test.describe('Wikipedia search - automation support task', () => {
 
@@ -10,6 +10,10 @@ test.describe('Wikipedia search - automation support task', () => {
     const home = new WikipediaHomePage(page);
     const results = await home.searchAndOpenFirstResult('Quality Assurance');
 
+    // Original assertion
+    await results.assertPageContains('software testing');
+
+    // Optional: demonstrate helper usage
     const pageContent = await page.textContent('#mw-content-text');
     expect(normalizeText(pageContent || '')).toContain('software testing');
   });
@@ -18,17 +22,30 @@ test.describe('Wikipedia search - automation support task', () => {
     const home = new WikipediaHomePage(page);
     await home.gotoHome();
 
-    // Ensure listener is active before triggering search
-    const apiResponsePromise = page.waitForResponse(resp =>
-      (resp.url().includes('/w/rest.php/v1/search/title') || resp.url().includes('/w/api.php')) &&
-      resp.status() === 200
-    );
+    // Array to collect matching API responses
+    const apiResponses: any[] = [];
+
+    // Listen for all responses
+    page.on('response', (resp) => {
+      if (
+        (resp.url().includes('/w/rest.php/v1/search/title') || resp.url().includes('/w/api.php')) &&
+        resp.status() === 200
+      ) {
+        apiResponses.push(resp);
+      }
+    });
 
     await home.search('Quality Assurance');
 
-    const apiResponse = await apiResponsePromise;
-    expect(apiResponse.ok()).toBeTruthy();
+    // Wait a short time to ensure responses are received
+    await page.waitForTimeout(2000);
+
+    expect(apiResponses.length).toBeGreaterThan(0);
+    expect(apiResponses[0].ok()).toBeTruthy();
+
+    console.log(`Detected ${apiResponses.length} Wikipedia API/network request(s).`);
   });
+
 
   test('searching with a long nonsense string returns no results', async ({ page }) => {
     const home = new WikipediaHomePage(page);
@@ -42,6 +59,10 @@ test.describe('Wikipedia search - automation support task', () => {
     );
 
     const message = await results.getNoResultsMessage();
+
+    // Log the no-results message for clarity
+    console.log('No results message:', message);
+
     expect(message.toLowerCase()).toContain('an error has occurred while searching');
   });
 
@@ -53,6 +74,10 @@ test.describe('Wikipedia search - automation support task', () => {
     await home.search('');
 
     const count = await page.locator(results.resultsSelector).count();
+
+    // Log number of results for clarity
+    console.log('Number of search results:', count);
+
     expect(count).toBe(0);
   });
 

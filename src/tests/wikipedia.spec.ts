@@ -1,14 +1,17 @@
-// src/tests/wikipedia.spec.ts
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { WikipediaHomePage } from '../pages/wikipedia';
 import { WikipediaSearchResultsPage } from '../pages/searchResult';
+import { normalizeText } from '../utils/helpers';
+
 
 test.describe('Wikipedia search - automation support task', () => {
 
-  test('searches for "Quality Assurance" and validates result contains "software testing"', async ({ page }) => {
+  test('searches for "Quality Assurance" and validates normalized text', async ({ page }) => {
     const home = new WikipediaHomePage(page);
     const results = await home.searchAndOpenFirstResult('Quality Assurance');
-    await results.assertPageContains('software testing');
+
+    const pageContent = await page.textContent('#mw-content-text');
+    expect(normalizeText(pageContent || '')).toContain('software testing');
   });
 
   test('verifies that a Wikipedia API/network request occurs during search', async ({ page }) => {

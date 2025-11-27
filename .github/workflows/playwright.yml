@@ -1,25 +1,29 @@
 name: Run tests
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
+          cache: 'npm' # 💡 caches node_modules automatically
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Install browsers
-        run: npx playwright install
+      - name: Install Playwright browsers
+        uses: microsoft/playwright-github-action@v1 # faster browser install
 
       - name: Run tests
         run: npm test

@@ -1,14 +1,17 @@
 import { BasePage } from './init';
 import { Page, Locator } from '@playwright/test';
 
+// WikipediaSearchResultsPage handles search results and no-results/error messages
 export class WikipediaSearchResultsPage extends BasePage {
   readonly resultsSelector = '#mw-content-text .mw-search-result-heading a';
-  readonly noResultsSelector = '.mw-search-nonefound';
+  // Flexible selector: handles error messages and no results messages
+  readonly noResultsSelector =
+    '#mw-content-text .cdx-message--error .cdx-message__content p, #mw-content-text .mw-search-nonefound';
   readonly articleHeadingSelector = '#firstHeading';
 
   constructor(page: Page) {
     super(page);
-  } 
+  }
 
   firstResult(): Locator {
     return this.page.locator(this.resultsSelector).first();
@@ -28,8 +31,10 @@ export class WikipediaSearchResultsPage extends BasePage {
   }
 
   async getNoResultsMessage(): Promise<string> {
-    await this.page.waitForSelector(this.noResultsSelector, { timeout: 10000 });
-    return this.noResultsMessage().innerText();
+    const locator = this.page.locator(this.noResultsSelector);
+    // Wait until any message is visible
+    await locator.first().waitFor({ state: 'visible', timeout: 10000 });
+    return locator.first().innerText();
   }
 
   async assertPageContains(text: string): Promise<void> {

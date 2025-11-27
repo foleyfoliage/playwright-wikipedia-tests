@@ -13,17 +13,18 @@ test.describe('Wikipedia search - automation support task', () => {
 
   test('verifies that a Wikipedia API/network request occurs during search', async ({ page }) => {
     const home = new WikipediaHomePage(page);
+    await home.gotoHome();
 
-    const apiResponse = page.waitForResponse(resp =>
+    // Ensure listener is active before triggering search
+    const apiResponsePromise = page.waitForResponse(resp =>
       (resp.url().includes('/w/rest.php/v1/search/title') || resp.url().includes('/w/api.php')) &&
       resp.status() === 200
     );
 
-    await home.gotoHome();
     await home.search('Quality Assurance');
 
-    const response = await apiResponse;
-    expect(response.ok()).toBeTruthy();
+    const apiResponse = await apiResponsePromise;
+    expect(apiResponse.ok()).toBeTruthy();
   });
 
   test('searching with a long nonsense string returns no results', async ({ page }) => {

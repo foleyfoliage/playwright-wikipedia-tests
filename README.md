@@ -1,23 +1,13 @@
 Scaffolding concept
 
 
-...
+```bash
 playwright-wikipedia-tests/
 ├─ src/
-│  ├─ config/
-│  │  ├─ config.ts
-│  │  ├─ env.ts
-│  │  └─ global/
-│  │     └─ setup.ts
-│  ├─ pages/
-│  ├─ tests/
-│  ├─ types/
-│  │  ├─ tasks.ts
-│  │  ├─ user.ts
-│  │  └─ userRequest.ts
-│  └─ utils/
-├─ .gitignore
-├─ package.json
+│  ├─ config/          # Environment + global setup
+│  ├─ pages/           # Page Object Model classes
+│  ├─ tests/           # Playwright test suites
+│  ├─ types/           # Shared TypeScript types
+│  └─ utils/           # Helpers and utilities
 ├─ playwright.config.ts
-└─ tsconfig.json
-...
+└─ package.json

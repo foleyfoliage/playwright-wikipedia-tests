@@ -27,10 +27,12 @@ test.describe('Wikipedia search - automation support task', () => {
       console.log(`[Network] ${response.status()} -> ${response.url()}`);
     });
 
-    const apiResponsePromise = page.waitForResponse(
-      response =>
-        response.url().includes('/w/rest.php/v1/search/title') && response.status() === 200
-    );
+  const apiResponsePromise = page.waitForResponse(response =>
+    (response.url().includes('/w/rest.php/v1/search/title') ||
+    response.url().includes('/w/api.php')) &&
+    response.status() === 200
+  );
+
 
     await home.gotoHome();
     await home.search('Quality Assurance');

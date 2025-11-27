@@ -1,5 +1,5 @@
 import { BasePage } from './init';
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 
 export class WikipediaSearchResultsPage extends BasePage {
   readonly resultsSelector = '#mw-content-text .mw-search-result-heading a';
@@ -15,7 +15,6 @@ export class WikipediaSearchResultsPage extends BasePage {
   }
 
   async openFirstResult(): Promise<void> {
-    // If article is already loaded (direct match), skip clicking
     const articleLoaded = await this.page.locator(this.articleHeadingSelector).isVisible();
     if (articleLoaded) return;
 
@@ -34,23 +33,18 @@ export class WikipediaSearchResultsPage extends BasePage {
   }
 
   async assertPageContains(text: string): Promise<void> {
-    // Wait for at least one element to be visible
     const elements = this.page.locator('#mw-content-text, .hatnote');
     await elements.first().waitFor({ state: 'visible', timeout: 15000 });
 
-    // Get innerText from all elements (ignore SVGs just in case)
     const allText = await elements.evaluateAll((els) =>
       els
-        .filter((el): el is HTMLElement => el instanceof HTMLElement) // type guard
+        .filter((el): el is HTMLElement => el instanceof HTMLElement)
         .map((el) => el.innerText)
         .join(' ')
     );
 
-    // Case-insensitive check
     if (!allText.toLowerCase().includes(text.toLowerCase())) {
       throw new Error(`Text "${text}" not found in page content`);
     }
   }
-
-
 }

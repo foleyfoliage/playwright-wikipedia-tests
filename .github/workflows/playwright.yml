@@ -1,3 +1,11 @@
+# Updated workflow:
+# - Restricts CI to main branch pushes and pull requests for more controlled execution
+# - Uses `npm ci` for reproducible and faster dependency installs in CI environments
+# - Enables Node.js dependency caching to reduce build times
+# - Replaces deprecated Playwright GitHub Action with `npx playwright install --with-deps`
+#   to support Ubuntu 24.04 runners and ensure required system dependencies are installed
+
+
 name: Run tests
 
 on:

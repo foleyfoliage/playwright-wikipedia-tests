@@ -14,7 +14,6 @@ async function searchAndOpen(page: Page, query: string): Promise<WikipediaSearch
 }
 
 test.describe('Wikipedia search - automation support task', () => {
-
   test('searches for Quality Assurance and validates result contains "software testing"', async ({ page }) => {
     const results = await searchAndOpen(page, 'Quality Assurance');
     await results.assertPageContains('software testing');
@@ -22,10 +21,8 @@ test.describe('Wikipedia search - automation support task', () => {
 
   test('verifies that a Wikipedia API/network request occurs during search', async ({ page }) => {
     const home = new WikipediaHomePage(page);
-
     let found = false;
 
-    // Listen for any response while the search is happening
     page.on('response', response => {
       if (
         (response.url().includes('/w/rest.php/v1/search/title') ||
@@ -39,12 +36,9 @@ test.describe('Wikipedia search - automation support task', () => {
     await home.gotoHome();
     await home.search('Quality Assurance');
 
-    // Give some time for the request to be captured
     await page.waitForTimeout(2000);
-
     expect(found).toBe(true);
   });
-
 
   test('searching with a long string returns no results', async ({ page }) => {
     const home = new WikipediaHomePage(page);
@@ -69,7 +63,6 @@ test.describe('Wikipedia search - automation support task', () => {
     await home.search('');
 
     const count = await page.locator(results.resultsSelector).count();
-    expect(count).toBe(0); // no search results
+    expect(count).toBe(0);
   });
-
 });

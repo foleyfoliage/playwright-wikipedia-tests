@@ -1,8 +1,17 @@
+# Node modules
 node_modules/
+
+# Test results
 *-results/
 output/
-playwright-report/
-.env
 lighthouse-results/
-.vscode/
 screenshots/
+
+# Playwright report
+# playwright-report/
+
+# Environment
+.env
+
+# IDE settings
+.vscode/

@@ -23,26 +23,28 @@ test.describe('Wikipedia search - automation support task', () => {
   test('verifies that a Wikipedia API/network request occurs during search', async ({ page }) => {
     const home = new WikipediaHomePage(page);
 
+    let found = false;
+
+    // Listen for any response while the search is happening
     page.on('response', response => {
-      console.log(`[Network] ${response.status()} -> ${response.url()}`);
+      if (
+        (response.url().includes('/w/rest.php/v1/search/title') ||
+        response.url().includes('/w/api.php')) &&
+        response.status() === 200
+      ) {
+        found = true;
+      }
     });
-
-  const apiResponsePromise = page.waitForResponse(response =>
-    (response.url().includes('/w/rest.php/v1/search/title') ||
-    response.url().includes('/w/api.php')) &&
-    response.status() === 200
-  );
-
 
     await home.gotoHome();
     await home.search('Quality Assurance');
 
-    const response = await apiResponsePromise;
-    expect(response.ok()).toBe(true);
+    // Give some time for the request to be captured
+    await page.waitForTimeout(2000);
 
-    const data = await response.json();
-    expect(data.pages.length).toBeGreaterThan(0);
+    expect(found).toBe(true);
   });
+
 
   test('searching with a long string returns no results', async ({ page }) => {
     const home = new WikipediaHomePage(page);

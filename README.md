@@ -1,6 +1,18 @@
 # Playwright Wikipedia Tests
 
-Automated end-to-end tests for Wikipedia using Playwright and TypeScript with a Page Object Model (POM) structure.
+End-to-end automation suite using Playwright + TypeScript + Page Object Model
+
+This project automates search-based assertions on Wikipedia, validating search behavior, content accuracy, network activity, and edge-case handling. It combines Playwright, POM architecture, and utility helpers to ensure scalable, maintainable, and production-ready test automation.
+
+# Features
+
+Page Object Model (POM) for clean separation of concerns
+Network assertion tests confirming Wikipedia API behavior
+Normalized text comparison for stable content checks
+Negative and edge-case scenarios (empty queries, long strings, special chars)
+Performance validations measuring search responsiveness
+Fully typed TypeScript codebase
+Extendable structure for future tasks (API tests, logins, CI, etc.)
 
 ## Project Structure
 
@@ -9,17 +21,32 @@ playwright-wikipedia-tests/
 ├─ package.json
 ├─ playwright.config.ts
 ├─ README.md
-├─ src
-│  ├─ config/          # Environment and global setup
-│  ├─ pages/           # Page Object Model classes
-│  ├─ tests/           # Playwright test suites
-│  ├─ types/           # Shared TypeScript types
-│  └─ utils/           # Helper functions and hooks
+├─ MANUAL_TESTS.md               # Manual test scenarios
+├─ WIREFRAME.md                  # Project design intentions (optional deliverable)
+└─ src
+   ├─ config/
+   │  ├─ env.ts                  # Environment values
+   │  └─ global/setup.ts         # Centralized test fixtures and setup
+   ├─ pages/                     # Page Object Model abstractions
+   │  ├─ init.ts
+   │  ├─ wikipedia.ts
+   │  └─ searchResult.ts
+   ├─ tests/                     # Automated test suites
+   │  ├─ wikipedia.spec.ts
+   │  ├─ wikipedia-performance.spec.ts
+   │  ├─ wikipedia-random-article.spec.ts
+   │  └─ init.spec.ts
+   ├─ types/
+   │  └─ task.ts                 # Domain modeling (future)
+   └─ utils/                     # Reusable helpers
+      ├─ helpers.ts
+      ├─ fileUtils.ts
+      └─ hooks.ts
 ```
 
 ## Requirements
 
-* Node.js (v18 or higher recommended)
+* Node.js
 * npm
 * Playwright
 
@@ -71,6 +98,20 @@ npx playwright show-report
 * **types/**: TypeScript interfaces and shared types
 * **utils/**: Helper functions and hooks
 
+## Automated Test Coverage
+
+```bash
+| Area                 | Test Behavior                                    |
+| -------------------- | ------------------------------------------------ |
+| Standard search      | Page contains "software testing"                 |
+| API/network checks   | Confirms `/w/api.php` or REST endpoint triggered |
+| Empty query          | Zero results gracefully handled                  |
+| Special characters   | Error messaging validated                        |
+| Long query limits    | Wikipedia’s max length boundary tested           |
+| Performance          | Search completes under 2 seconds                 |
+| Case-insensitivity   | Mixed-case queries yield expected results        |
+| International search | Validate behavior on non-English terms           |
+```
 
 ## Test Results
 
@@ -100,3 +141,7 @@ Detected 1 Wikipedia API/network request(s).
 
   10 passed (16.3s)
 ```
+
+## Manual Tests
+
+* MANUAL_TESTS.md

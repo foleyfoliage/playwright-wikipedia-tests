@@ -63,8 +63,6 @@ test.describe('Wikipedia search - automation support task', () => {
     );
   });
 
-
-
   test('searching with a long nonsense string returns no results', async ({ page }) => {
     const home = new WikipediaHomePage(page);
     const results = new WikipediaSearchResultsPage(page);

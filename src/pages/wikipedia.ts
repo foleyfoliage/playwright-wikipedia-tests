@@ -1,4 +1,3 @@
-// src/pages/wikipedia.ts
 import { Page } from '@playwright/test';
 import { WikipediaSearchResultsPage } from './searchResult';
 
@@ -24,10 +23,6 @@ export class WikipediaHomePage {
     }
   }
 
-  /**
-   * Convenience method: search for a query and open the first result.
-   * Returns a WikipediaSearchResultsPage object for assertions.
-   */
   async searchAndOpenFirstResult(query: string): Promise<WikipediaSearchResultsPage> {
     const resultsPage = new WikipediaSearchResultsPage(this.page);
     await this.gotoHome();

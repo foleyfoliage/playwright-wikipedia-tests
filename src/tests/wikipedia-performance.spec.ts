@@ -16,9 +16,8 @@ test.describe('Wikipedia search - performance', () => {
     console.log(`Search completed in ${duration}ms`);
 
     expect(duration).toBeLessThanOrEqual(2000);
-    // Due to the first expect being strict relaxed limit
+    // Due to the first expect being strict relaxed limit - Workaround for now.
     expect(duration).toBeLessThan(2500);
-
   });
 
   test('opening first search result should be fast', async ({ page }) => {

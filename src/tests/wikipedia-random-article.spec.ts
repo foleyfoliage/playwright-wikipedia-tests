@@ -27,7 +27,7 @@ test.describe('Wikipedia search - edge cases', () => {
     const results = new WikipediaSearchResultsPage(page);
 
     await home.gotoHome();
-    await home.search('a'.repeat(5000)); // 5000-character nonsense string
+    await home.search('a'.repeat(5000));
 
     const message = await results.getNoResultsMessage();
     console.log('No results message for long string:', message);
@@ -46,9 +46,8 @@ test.describe('Wikipedia search - edge cases', () => {
 
   test('search for terms in different languages', async ({ page }) => {
     const home = new WikipediaHomePage(page);
-    const results = await home.searchAndOpenFirstResult('informática'); // Spanish term for "computing"
-
-    await results.assertPageContains('computing'); // Validate it finds related content
+    const results = await home.searchAndOpenFirstResult('informática');
+    await results.assertPageContains('computing');
   });
 
 });
